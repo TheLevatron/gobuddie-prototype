@@ -79,12 +79,19 @@
 
         <div class="card elevate">
           <div class="card-header">
-            <h3>Stone Hit</h3>
+            <h3>Account Funds</h3>
           </div>
           <div class="points">
-            <div class="big-number" id="stat-points">0</div>
-            <button class="btn primary" id="claim-streak">Claim +10</button>
+            <div>
+              <div class="label">Available Balance</div>
+              <div class="big-number" id="funds-balance">₱0</div>
+            </div>
+            <div class="actions">
+              <input type="number" id="funds-topup" placeholder="Top up amount" class="topup-input" />
+              <button class="btn primary" id="funds-topup-btn">Top Up</button>
+            </div>
           </div>
+          <small class="muted">Mock funds for demo only. Payments will deduct from this balance.</small>
         </div>
       </div>
 
@@ -102,8 +109,47 @@
           </div>
           <form id="quick-add-form" class="form">
             <div class="field">
-              <input type="text" id="qa-name" required />
-              <label>Name (e.g., Meralco)</label>
+              <select id="qa-category" class="select">
+                <option value="">Select category (optional)</option>
+                <option value="Utilities">Utilities</option>
+                <option value="Telco">Telco</option>
+                <option value="Internet">Internet</option>
+                <option value="E-Wallets">E-Wallets</option>
+                <option value="Streaming">Streaming</option>
+                <option value="Government">Government</option>
+                <option value="Other">Other</option>
+              </select>
+              <label>Category</label>
+            </div>
+            <div class="field">
+              <select id="qa-biller" class="select">
+                <option value="">Choose a biller or type name</option>
+                <!-- Utilities -->
+                <option value="Meralco">Meralco (Electric)</option>
+                <option value="Maynilad">Maynilad (Water)</option>
+                <option value="Manila Water">Manila Water</option>
+                <!-- Telco / Internet -->
+                <option value="Globe">Globe (Mobile/Telco)</option>
+                <option value="Smart">Smart (Mobile/Telco)</option>
+                <option value="PLDT">PLDT (Fiber)</option>
+                <option value="Converge">Converge (Fiber)</option>
+                <!-- E-Wallets -->
+                <option value="GCash">GCash</option>
+                <option value="Maya">Maya</option>
+                <!-- Streaming -->
+                <option value="Netflix">Netflix</option>
+                <option value="Spotify">Spotify</option>
+                <option value="Disney+">Disney+</option>
+                <!-- Government -->
+                <option value="SSS">SSS Contribution</option>
+                <option value="Pag-IBIG">Pag-IBIG</option>
+                <option value="PhilHealth">PhilHealth</option>
+              </select>
+              <label>Biller</label>
+            </div>
+            <div class="field">
+              <input type="text" id="qa-name" placeholder="e.g., Custom biller" />
+              <label>Or type a name</label>
             </div>
             <div class="field">
               <input type="number" id="qa-amount" min="0" step="1" required />
@@ -128,7 +174,7 @@
         <div class="table-responsive">
           <table class="table modern" id="recent-bills-table">
             <thead>
-              <tr><th>Name</th><th>Amount</th><th>Due</th><th>Scheduled</th><th>Actions</th></tr>
+              <tr><th>Name</th><th>Category</th><th>Amount</th><th>Due</th><th>Scheduled</th><th>Actions</th></tr>
             </thead>
             <tbody></tbody>
           </table>
