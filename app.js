@@ -1,6 +1,14 @@
-/* Modernized UX + micro-interactions */
+/* Modernized UX + Filipino billers + mock funds */
 
-const store = { bills: [], reminders: [], points: 0, monthlyBudget: 0, otpMonth: null };
+const store = {
+  bills: [],
+  reminders: [],
+  points: 0,
+  monthlyBudget: 0,
+  otpMonth: null,
+  funds: 2000, // starting mock funds
+};
+
 const el = (id) => document.getElementById(id);
 
 // Tabs
@@ -21,12 +29,13 @@ function buildMonthDays(ym) {
   for (let d=1; d<=last.getDate(); d++) days.push({ dateStr: `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}` });
   return days;
 }
-function createBill(name, amount, due, scheduled=false) {
-  const bill = { id: crypto.randomUUID(), name, amount, due, scheduled, prioritized:false };
+function createBill(name, amount, due, scheduled=false, category='') {
+  const bill = { id: crypto.randomUUID(), name, amount, due, scheduled, prioritized:false, category };
   store.bills.push(bill);
   store.reminders.push({ billId: bill.id, when: due, note: `Reminder: ${name} due` });
   return bill;
 }
+function findBillById(id){ return store.bills.find(b => b.id === id); }
 function findBill(name, amount, due){ return store.bills.find(b => b.name.toLowerCase()===name.toLowerCase() && b.amount===amount && b.due===due); }
 
 // Chat
@@ -104,6 +113,9 @@ function prioritizeByBudget() {
 
 // Dashboard
 function renderDashboard() {
+  // funds
+  const fundsEl = el('funds-balance'); if (fundsEl) fundsEl.textContent = `₱${store.funds.toFixed(0)}`;
+
   const ym = (calendarMonth && calendarMonth.value) || currentMonthStr();
   const bills = store.bills.filter(b => b.due.startsWith(ym));
   const scheduledCount = bills.filter(b => b.scheduled).length;
@@ -141,11 +153,13 @@ function renderDashboard() {
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <td>${b.name}</td>
+        <td>${b.category || '—'}</td>
         <td>₱${b.amount}</td>
         <td>${b.due}</td>
         <td>${b.scheduled ? 'Yes' : 'No'}</td>
         <td>
           <button class="btn schedule" data-id="${b.id}">${b.scheduled ? 'Unschedule' : 'Schedule'}</button>
+          <button class="btn primary pay" data-id="${b.id}">Pay</button>
           <button class="btn delete" data-id="${b.id}">Delete</button>
         </td>
       `;
@@ -153,6 +167,17 @@ function renderDashboard() {
     });
     recentTableBody.querySelectorAll('.btn.schedule').forEach(btn => {
       btn.addEventListener('click', () => { const id=btn.getAttribute('data-id'); const bill=store.bills.find(x=>x.id===id); if(bill){ bill.scheduled=!bill.scheduled; prioritizeByBudget(); renderAll(); } });
+    });
+    recentTableBody.querySelectorAll('.btn.pay').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-id'); const bill = findBillById(id);
+        if (!bill) return;
+        if (store.funds < bill.amount) { alert('Insufficient funds. Top up first.'); return; }
+        store.funds -= bill.amount;
+        bill.scheduled = true; // mark as paid/scheduled
+        addMsg('system', `Paid ${bill.name} for ₱${bill.amount}. Remaining funds: ₱${store.funds.toFixed(0)}`);
+        renderAll();
+      });
     });
     recentTableBody.querySelectorAll('.btn.delete').forEach(btn => {
       btn.addEventListener('click', () => { const id=btn.getAttribute('data-id'); store.bills = store.bills.filter(x=>x.id!==id); store.reminders = store.reminders.filter(r=>r.billId!==id); prioritizeByBudget(); renderAll(); });
@@ -163,6 +188,19 @@ function renderDashboard() {
 // Points
 const claimBtn = document.getElementById('claim-streak');
 if (claimBtn) claimBtn.addEventListener('click', () => { store.points += 10; addMsg('system','Streak claimed! +10 points.'); renderDashboard(); });
+
+// Funds top-up
+const topupBtn = document.getElementById('funds-topup-btn');
+if (topupBtn) {
+  topupBtn.addEventListener('click', () => {
+    const amt = Number(document.getElementById('funds-topup')?.value || 0);
+    if (amt <= 0) return;
+    store.funds += amt;
+    addMsg('system', `Top up: ₱${amt.toFixed(0)}. New balance: ₱${store.funds.toFixed(0)}`);
+    document.getElementById('funds-topup').value = '';
+    renderDashboard();
+  });
+}
 
 // Budgeting
 const calcBudgetBtn = document.getElementById('calc-budget');
@@ -213,11 +251,17 @@ const quickAddForm = document.getElementById('quick-add-form');
 if (quickAddForm) {
   quickAddForm.addEventListener('submit', (e) => {
     e.preventDefault();
-    const name = (document.getElementById('qa-name')?.value||'').trim();
-    const amount = Number(document.getElementById('qa-amount')?.value||0);
-    const due = document.getElementById('qa-due')?.value||'';
+    const category = (document.getElementById('qa-category')?.value || '').trim();
+    const biller = (document.getElementById('qa-biller')?.value || '').trim();
+    const nameTyped = (document.getElementById('qa-name')?.value || '').trim();
+    const name = nameTyped || biller || 'Untitled bill';
+    const amount = Number(document.getElementById('qa-amount')?.value || 0);
+    const due = document.getElementById('qa-due')?.value || '';
     if (!name || !amount || !due) return;
-    createBill(name, amount, due, false); prioritizeByBudget(); renderAll(); quickAddForm.reset();
+    createBill(name, amount, due, false, category);
+    prioritizeByBudget();
+    renderAll();
+    quickAddForm.reset();
   });
 }
 
@@ -227,7 +271,10 @@ if (otpBtn) otpBtn.addEventListener('click', () => { store.otpMonth = currentMon
 
 // Seed demo data
 (function seed(){
-  const ym=currentMonthStr(); createBill('Meralco',1500,`${ym}-05`,false); createBill('Globe',999,`${ym}-10`,false); createBill('Water',600,`${ym}-15`,true);
+  const ym=currentMonthStr();
+  createBill('Meralco',1500,`${ym}-05`,false,'Utilities');
+  createBill('Globe',999,`${ym}-10`,false,'Telco');
+  createBill('Water',600,`${ym}-15`,true,'Utilities');
   store.monthlyBudget=3000; prioritizeByBudget();
 })();
 
