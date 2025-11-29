@@ -3,24 +3,70 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Banking in Chat — Prototype</title>
+  <title>GoBuddie — Banking in Chat</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <header class="app-header">
-    <h1>Banking in Chat</h1>
+    <h1>GoBuddie — Banking in Chat</h1>
     <nav>
-      <button class="tab-btn" data-tab="chat" aria-selected="true">Chat</button>
+      <button class="tab-btn" data-tab="dashboard" aria-selected="true">Dashboard</button>
+      <button class="tab-btn" data-tab="chat">Chat</button>
       <button class="tab-btn" data-tab="calendar">Bills Calendar</button>
-      <button class="tab-btn" data-tab="dashboard">Dashboard</button>
       <button class="tab-btn" data-tab="budgeting">Budgeting</button>
       <button class="tab-btn" data-tab="tips">Suggestions</button>
     </nav>
   </header>
 
   <main>
+    <!-- Dashboard pane (default active) -->
+    <section id="tab-dashboard" class="tab active" aria-label="Dashboard">
+      <div class="cards">
+        <div class="card">
+          <h3>This Month</h3>
+          <p>Total Bills: <strong id="stat-total-bills">0</strong></p>
+          <p>Scheduled: <strong id="stat-scheduled">0</strong></p>
+          <p>Remaining Budget: <strong id="stat-remaining">₱0</strong></p>
+        </div>
+        <div class="card">
+          <h3>Credit & Trust (Mock)</h3>
+          <p>On-time rate: <strong id="stat-on-time">—</strong></p>
+          <p>Trust score: <strong id="stat-trust">—</strong></p>
+        </div>
+        <div class="card">
+          <h3>Stone Hit (Gamify)</h3>
+          <p>Points: <strong id="stat-points">0</strong></p>
+          <button id="claim-streak">Claim streak</button>
+        </div>
+      </div>
+      <div class="reminders">
+        <h3>Upcoming Reminders</h3>
+        <ul id="reminders-list"></ul>
+      </div>
+
+      <div class="quick-add">
+        <h3>Quick add bill</h3>
+        <form id="quick-add-form" class="quick-add-form">
+          <input type="text" id="qa-name" placeholder="Name (e.g., Meralco)" required />
+          <input type="number" id="qa-amount" placeholder="Amount (₱)" min="0" step="1" required />
+          <input type="date" id="qa-due" required />
+          <button type="submit">Add</button>
+        </form>
+      </div>
+
+      <div class="recent-bills">
+        <h3>Recent bills</h3>
+        <table class="table" id="recent-bills-table">
+          <thead>
+            <tr><th>Name</th><th>Amount</th><th>Due</th><th>Scheduled</th><th>Actions</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
     <!-- Chat pane -->
-    <section id="tab-chat" class="tab active" aria-label="Chat">
+    <section id="tab-chat" class="tab" aria-label="Chat">
       <div class="chat-container">
         <div id="chat-log" class="chat-log" aria-live="polite"></div>
         <form id="chat-form" class="chat-form">
@@ -53,32 +99,6 @@
         <span class="pill scheduled">Scheduled</span>
         <span class="pill prioritized">Prioritized</span>
         <span class="pill overflow">Overflow (beyond budget)</span>
-      </div>
-    </section>
-
-    <!-- Dashboard pane -->
-    <section id="tab-dashboard" class="tab" aria-label="Dashboard">
-      <div class="cards">
-        <div class="card">
-          <h3>This Month</h3>
-          <p>Total Bills: <strong id="stat-total-bills">0</strong></p>
-          <p>Scheduled: <strong id="stat-scheduled">0</strong></p>
-          <p>Remaining Budget: <strong id="stat-remaining">₱0</strong></p>
-        </div>
-        <div class="card">
-          <h3>Credit & Trust (Mock)</h3>
-          <p>On-time rate: <strong id="stat-on-time">—</strong></p>
-          <p>Trust score: <strong id="stat-trust">—</strong></p>
-        </div>
-        <div class="card">
-          <h3>Stone Hit (Gamify)</h3>
-          <p>Points: <strong id="stat-points">0</strong></p>
-          <button id="claim-streak">Claim streak</button>
-        </div>
-      </div>
-      <div class="reminders">
-        <h3>Upcoming Reminders</h3>
-        <ul id="reminders-list"></ul>
       </div>
     </section>
 
