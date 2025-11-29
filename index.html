@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Banking in Chat — Prototype</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="app-header">
+    <h1>Banking in Chat</h1>
+    <nav>
+      <button class="tab-btn" data-tab="chat" aria-selected="true">Chat</button>
+      <button class="tab-btn" data-tab="calendar">Bills Calendar</button>
+      <button class="tab-btn" data-tab="dashboard">Dashboard</button>
+      <button class="tab-btn" data-tab="budgeting">Budgeting</button>
+      <button class="tab-btn" data-tab="tips">Suggestions</button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- Chat pane -->
+    <section id="tab-chat" class="tab active" aria-label="Chat">
+      <div class="chat-container">
+        <div id="chat-log" class="chat-log" aria-live="polite"></div>
+        <form id="chat-form" class="chat-form">
+          <input id="chat-input" type="text" placeholder="Type to load or schedule bills… e.g., `Add Meralco 1500 due 2025-12-05`" aria-label="Chat input" />
+          <button type="submit">Send</button>
+        </form>
+        <div class="quick-actions">
+          <button data-msg="Add Globe 999 due 2025-12-10">+ Globe 999 due Dec 10</button>
+          <button data-msg="Schedule payment Meralco 1500 on 2025-12-05">Schedule Meralco Dec 5</button>
+          <button data-msg="Prioritize bills if monthly budget is 3000">Prioritize bills with budget ₱3000</button>
+          <button data-msg="Show reminders">Show reminders</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Calendar pane -->
+    <section id="tab-calendar" class="tab" aria-label="Bills Calendar">
+      <div class="calendar-controls">
+        <label>Month:
+          <input type="month" id="calendar-month" />
+        </label>
+        <label>Monthly Budget:
+          <input type="number" id="monthly-budget" min="0" step="1" placeholder="3000" />
+        </label>
+        <button id="recalculate-priority">Recalculate Priority</button>
+      </div>
+      <div id="calendar-grid" class="calendar-grid"></div>
+      <div class="legend">
+        <span class="pill due">Due</span>
+        <span class="pill scheduled">Scheduled</span>
+        <span class="pill prioritized">Prioritized</span>
+        <span class="pill overflow">Overflow (beyond budget)</span>
+      </div>
+    </section>
+
+    <!-- Dashboard pane -->
+    <section id="tab-dashboard" class="tab" aria-label="Dashboard">
+      <div class="cards">
+        <div class="card">
+          <h3>This Month</h3>
+          <p>Total Bills: <strong id="stat-total-bills">0</strong></p>
+          <p>Scheduled: <strong id="stat-scheduled">0</strong></p>
+          <p>Remaining Budget: <strong id="stat-remaining">₱0</strong></p>
+        </div>
+        <div class="card">
+          <h3>Credit & Trust (Mock)</h3>
+          <p>On-time rate: <strong id="stat-on-time">—</strong></p>
+          <p>Trust score: <strong id="stat-trust">—</strong></p>
+        </div>
+        <div class="card">
+          <h3>Stone Hit (Gamify)</h3>
+          <p>Points: <strong id="stat-points">0</strong></p>
+          <button id="claim-streak">Claim streak</button>
+        </div>
+      </div>
+      <div class="reminders">
+        <h3>Upcoming Reminders</h3>
+        <ul id="reminders-list"></ul>
+      </div>
+    </section>
+
+    <!-- Budgeting pane -->
+    <section id="tab-budgeting" class="tab" aria-label="Budgeting">
+      <form class="budget-form">
+        <label>Monthly Income
+          <input type="number" id="income" min="0" step="1" placeholder="25000" />
+        </label>
+        <label>Savings Goal
+          <input type="number" id="savings-goal" min="0" step="1" placeholder="5000" />
+        </label>
+        <label>Essentials Cap
+          <input type="number" id="essentials-cap" min="0" step="1" placeholder="50" />%
+        </label>
+        <label>Wants Cap
+          <input type="number" id="wants-cap" min="0" step="1" placeholder="30" />%
+        </label>
+        <label>Debt Repayment Cap
+          <input type="number" id="debt-cap" min="0" step="1" placeholder="20" />%
+        </label>
+        <button id="calc-budget">Calculate Plan</button>
+      </form>
+      <div id="budget-plan" class="budget-plan"></div>
+    </section>
+
+    <!-- Suggestions pane -->
+    <section id="tab-tips" class="tab" aria-label="Suggestions">
+      <div id="tips-list" class="tips-list"></div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <small>Prototype • OTP (mock) renews monthly • Built for concept validation</small>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,132 @@
+:root {
+  --bg: #0f172a;
+  --panel: #111827;
+  --text: #e5e7eb;
+  --muted: #9ca3af;
+  --accent: #22d3ee;
+  --accent-2: #a78bfa;
+  --danger: #ef4444;
+  --ok: #10b981;
+  --warn: #f59e0b;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, Apple Color Emoji, Segoe UI Emoji;
+  background: linear-gradient(180deg, #0b1220 0%, var(--bg) 100%);
+  color: var(--text);
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid #1f2937;
+  background: #0b1220;
+}
+.app-header h1 { font-size: 18px; margin: 0; }
+nav { display: flex; gap: 8px; flex-wrap: wrap; }
+.tab-btn {
+  background: #1f2937;
+  color: var(--text);
+  border: 1px solid #374151;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.tab-btn[aria-selected="true"] {
+  border-color: var(--accent);
+  color: #fff;
+}
+
+main { padding: 16px; }
+.tab { display: none; }
+.tab.active { display: block; }
+
+.chat-container {
+  display: grid; gap: 12px;
+  grid-template-rows: 1fr auto auto;
+  height: calc(100vh - 160px);
+}
+.chat-log {
+  background: var(--panel);
+  border: 1px solid #1f2937;
+  border-radius: 12px;
+  padding: 12px;
+  overflow: auto;
+}
+.msg { margin: 8px 0; display: flex; gap: 8px; align-items: flex-start; }
+.msg .bubble {
+  padding: 8px 12px; border-radius: 12px;
+  background: #111827; border: 1px solid #1f2937;
+  max-width: 70%;
+}
+.msg.user .bubble { background: #0b1220; border-color: #243142; }
+.msg.system .bubble { background: #0e1a2b; border-color: #2a3b52; }
+.msg .meta { font-size: 12px; color: var(--muted); }
+
+.chat-form { display: flex; gap: 8px; }
+.chat-form input {
+  flex: 1; padding: 10px 12px; border-radius: 10px;
+  border: 1px solid #334155; background: #0b1220; color: var(--text);
+}
+.chat-form button { padding: 10px 14px; border-radius: 10px; border: 1px solid #334155; background: #accent-2; color: #fff; }
+
+.quick-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.quick-actions button { padding: 8px 10px; border-radius: 10px; border: 1px solid #334155; background: #1f2937; color: var(--text); }
+.quick-actions button:hover { border-color: var(--accent); }
+
+.calendar-controls { display: flex; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
+.calendar-grid {
+  display: grid; gap: 8px;
+  grid-template-columns: repeat(7, 1fr);
+}
+.calendar-day {
+  min-height: 120px;
+  background: var(--panel);
+  border: 1px solid #1f2937;
+  border-radius: 10px;
+  padding: 8px;
+}
+.calendar-day .date { font-size: 12px; color: var(--muted); }
+.bill {
+  margin-top: 6px; padding: 6px 8px;
+  border: 1px solid #374151;
+  border-radius: 8px;
+  font-size: 12px;
+}
+.bill.due { background: #0c1a2a; }
+.bill.scheduled { background: #0a2220; border-color: var(--ok); }
+.bill.prioritized { border-color: var(--accent); }
+.bill.overflow { border-color: var(--danger); }
+
+.legend { margin-top: 8px; display: flex; gap: 8px; flex-wrap: wrap; }
+.pill { padding: 4px 8px; border-radius: 999px; border: 1px solid #374151; font-size: 12px; }
+.pill.due { background: #0c1a2a; }
+.pill.scheduled { background: #0a2220; }
+.pill.prioritized { border-color: var(--accent); }
+.pill.overflow { border-color: var(--danger); }
+
+.cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.card {
+  background: var(--panel);
+  border: 1px solid #1f2937;
+  border-radius: 12px; padding: 12px;
+}
+.reminders ul { list-style: none; padding: 0; }
+.reminders li { padding: 8px 0; border-bottom: 1px solid #1f2937; }
+
+.budget-form { display: grid; grid-template-columns: repeat(2, minmax(220px, 1fr)); gap: 12px; margin-bottom: 12px; }
+.budget-form input { width: 100%; padding: 8px; border-radius: 8px; border: 1px solid #334155; background: #0b1220; color: var(--text); }
+.budget-form button { grid-column: 1 / -1; padding: 10px; border-radius: 10px; border: 1px solid #334155; background: var(--accent); color: #032330; font-weight: 700; }
+.budget-plan { background: var(--panel); border: 1px solid #1f2937; border-radius: 12px; padding: 12px; }
+
+.tips-list { display: grid; gap: 8px; }
+.tip { background: var(--panel); border: 1px solid #1f2937; border-left: 4px solid var(--warn); padding: 10px; border-radius: 10px; }
+
+.app-footer { padding: 12px 16px; border-top: 1px solid #1f2937; color: #muted; }
+@media (max-width: 900px) {
+  .cards { grid-template-columns: 1fr; }
+  .calendar-grid { grid-template-columns: repeat(7, min(max-width: 100px, 1fr)); }
+}
