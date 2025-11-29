@@ -7,132 +7,240 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <header class="app-header">
-    <h1>GoBuddie — Banking in Chat</h1>
-    <nav>
-      <button class="tab-btn" data-tab="dashboard" aria-selected="true">Dashboard</button>
-      <button class="tab-btn" data-tab="chat">Chat</button>
-      <button class="tab-btn" data-tab="calendar">Bills Calendar</button>
-      <button class="tab-btn" data-tab="budgeting">Budgeting</button>
-      <button class="tab-btn" data-tab="tips">Suggestions</button>
+  <div class="bg-gradient"></div>
+  <header class="app-header glass">
+    <div class="brand">
+      <div class="logo">GB</div>
+      <h1>GoBuddie</h1>
+      <span class="subtitle">Banking in Chat</span>
+    </div>
+    <nav class="nav">
+      <button class="tab-btn" data-tab="dashboard" aria-selected="true">
+        <span class="icon">📊</span> Dashboard
+      </button>
+      <button class="tab-btn" data-tab="chat">
+        <span class="icon">💬</span> Chat
+      </button>
+      <button class="tab-btn" data-tab="calendar">
+        <span class="icon">🗓️</span> Calendar
+      </button>
+      <button class="tab-btn" data-tab="budgeting">
+        <span class="icon">🧮</span> Budgeting
+      </button>
+      <button class="tab-btn" data-tab="tips">
+        <span class="icon">💡</span> Tips
+      </button>
     </nav>
   </header>
 
   <main>
     <!-- Dashboard pane (default active) -->
     <section id="tab-dashboard" class="tab active" aria-label="Dashboard">
-      <div class="cards">
-        <div class="card">
-          <h3>This Month</h3>
-          <p>Total Bills: <strong id="stat-total-bills">0</strong></p>
-          <p>Scheduled: <strong id="stat-scheduled">0</strong></p>
-          <p>Remaining Budget: <strong id="stat-remaining">₱0</strong></p>
+      <div class="grid-3">
+        <div class="card elevate">
+          <div class="card-header">
+            <h3>This Month</h3>
+            <span class="badge">Live</span>
+          </div>
+          <div class="stats">
+            <div class="stat">
+              <span class="label">Total Bills</span>
+              <span class="value" id="stat-total-bills">0</span>
+            </div>
+            <div class="stat">
+              <span class="label">Scheduled</span>
+              <span class="value" id="stat-scheduled">0</span>
+            </div>
+            <div class="stat">
+              <span class="label">Remaining Budget</span>
+              <span class="value accent" id="stat-remaining">₱0</span>
+            </div>
+          </div>
         </div>
-        <div class="card">
-          <h3>Credit & Trust (Mock)</h3>
-          <p>On-time rate: <strong id="stat-on-time">—</strong></p>
-          <p>Trust score: <strong id="stat-trust">—</strong></p>
+
+        <div class="card elevate">
+          <div class="card-header">
+            <h3>Credit & Trust (Mock)</h3>
+          </div>
+          <div class="meter">
+            <div class="meter-row">
+              <span>On-time rate</span>
+              <span id="stat-on-time">—</span>
+            </div>
+            <div class="meter-row">
+              <span>Trust score</span>
+              <span id="stat-trust">—</span>
+            </div>
+            <div class="progress">
+              <div class="progress-bar" id="trust-bar" style="width: 0%"></div>
+            </div>
+          </div>
         </div>
-        <div class="card">
-          <h3>Stone Hit (Gamify)</h3>
-          <p>Points: <strong id="stat-points">0</strong></p>
-          <button id="claim-streak">Claim streak</button>
+
+        <div class="card elevate">
+          <div class="card-header">
+            <h3>Stone Hit</h3>
+          </div>
+          <div class="points">
+            <div class="big-number" id="stat-points">0</div>
+            <button class="btn primary" id="claim-streak">Claim +10</button>
+          </div>
         </div>
-      </div>
-      <div class="reminders">
-        <h3>Upcoming Reminders</h3>
-        <ul id="reminders-list"></ul>
       </div>
 
-      <div class="quick-add">
-        <h3>Quick add bill</h3>
-        <form id="quick-add-form" class="quick-add-form">
-          <input type="text" id="qa-name" placeholder="Name (e.g., Meralco)" required />
-          <input type="number" id="qa-amount" placeholder="Amount (₱)" min="0" step="1" required />
-          <input type="date" id="qa-due" required />
-          <button type="submit">Add</button>
-        </form>
+      <div class="grid-2 mt-16">
+        <div class="card elevate">
+          <div class="card-header">
+            <h3>Upcoming Reminders</h3>
+          </div>
+          <ul id="reminders-list" class="list"></ul>
+        </div>
+
+        <div class="card elevate">
+          <div class="card-header">
+            <h3>Quick add bill</h3>
+          </div>
+          <form id="quick-add-form" class="form">
+            <div class="field">
+              <input type="text" id="qa-name" required />
+              <label>Name (e.g., Meralco)</label>
+            </div>
+            <div class="field">
+              <input type="number" id="qa-amount" min="0" step="1" required />
+              <label>Amount (₱)</label>
+            </div>
+            <div class="field">
+              <input type="date" id="qa-due" required />
+              <label>Due date</label>
+            </div>
+            <button type="submit" class="btn glow">Add Bill</button>
+          </form>
+        </div>
       </div>
 
-      <div class="recent-bills">
-        <h3>Recent bills</h3>
-        <table class="table" id="recent-bills-table">
-          <thead>
-            <tr><th>Name</th><th>Amount</th><th>Due</th><th>Scheduled</th><th>Actions</th></tr>
-          </thead>
-          <tbody></tbody>
-        </table>
+      <div class="card elevate mt-16">
+        <div class="card-header">
+          <h3>Recent bills</h3>
+          <div class="actions">
+            <button class="btn subtle" data-goto="calendar">Open Calendar</button>
+          </div>
+        </div>
+        <div class="table-responsive">
+          <table class="table modern" id="recent-bills-table">
+            <thead>
+              <tr><th>Name</th><th>Amount</th><th>Due</th><th>Scheduled</th><th>Actions</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
       </div>
     </section>
 
     <!-- Chat pane -->
     <section id="tab-chat" class="tab" aria-label="Chat">
-      <div class="chat-container">
-        <div id="chat-log" class="chat-log" aria-live="polite"></div>
+      <div class="layout-vert">
+        <div id="chat-log" class="chat-log glass"></div>
         <form id="chat-form" class="chat-form">
-          <input id="chat-input" type="text" placeholder="Type to load or schedule bills… e.g., `Add Meralco 1500 due 2025-12-05`" aria-label="Chat input" />
-          <button type="submit">Send</button>
+          <div class="field grow">
+            <input id="chat-input" type="text" />
+            <label>Type commands (e.g., Add Meralco 1500 due YYYY-MM-DD)</label>
+          </div>
+          <button type="submit" class="btn primary">Send</button>
         </form>
         <div class="quick-actions">
-          <button data-msg="Add Globe 999 due 2025-12-10">+ Globe 999 due Dec 10</button>
-          <button data-msg="Schedule payment Meralco 1500 on 2025-12-05">Schedule Meralco Dec 5</button>
-          <button data-msg="Prioritize bills if monthly budget is 3000">Prioritize bills with budget ₱3000</button>
-          <button data-msg="Show reminders">Show reminders</button>
+          <button class="chip" data-msg="Add Globe 999 due 2025-12-10">+ Globe 999 due Dec 10</button>
+          <button class="chip" data-msg="Schedule payment Meralco 1500 on 2025-12-05">Schedule Meralco Dec 5</button>
+          <button class="chip" data-msg="Prioritize bills if monthly budget is 3000">Prioritize ₱3000</button>
+          <button class="chip" data-msg="Show reminders">Show reminders</button>
         </div>
       </div>
     </section>
 
     <!-- Calendar pane -->
     <section id="tab-calendar" class="tab" aria-label="Bills Calendar">
-      <div class="calendar-controls">
-        <label>Month:
-          <input type="month" id="calendar-month" />
-        </label>
-        <label>Monthly Budget:
-          <input type="number" id="monthly-budget" min="0" step="1" placeholder="3000" />
-        </label>
-        <button id="recalculate-priority">Recalculate Priority</button>
-      </div>
-      <div id="calendar-grid" class="calendar-grid"></div>
-      <div class="legend">
-        <span class="pill due">Due</span>
-        <span class="pill scheduled">Scheduled</span>
-        <span class="pill prioritized">Prioritized</span>
-        <span class="pill overflow">Overflow (beyond budget)</span>
+      <div class="card elevate">
+        <div class="card-header">
+          <h3>Monthly Bills</h3>
+        </div>
+        <div class="calendar-controls">
+          <div class="field">
+            <input type="month" id="calendar-month" />
+            <label>Month</label>
+          </div>
+          <div class="field">
+            <input type="number" id="monthly-budget" min="0" step="1" placeholder="3000" />
+            <label>Monthly Budget (₱)</label>
+          </div>
+          <button id="recalculate-priority" class="btn glow">Recalculate</button>
+        </div>
+        <div id="calendar-grid" class="calendar-grid"></div>
+        <div class="legend">
+          <span class="pill due">Due</span>
+          <span class="pill scheduled">Scheduled</span>
+          <span class="pill prioritized">Prioritized</span>
+          <span class="pill overflow">Overflow</span>
+        </div>
       </div>
     </section>
 
     <!-- Budgeting pane -->
     <section id="tab-budgeting" class="tab" aria-label="Budgeting">
-      <form class="budget-form">
-        <label>Monthly Income
-          <input type="number" id="income" min="0" step="1" placeholder="25000" />
-        </label>
-        <label>Savings Goal
-          <input type="number" id="savings-goal" min="0" step="1" placeholder="5000" />
-        </label>
-        <label>Essentials Cap
-          <input type="number" id="essentials-cap" min="0" step="1" placeholder="50" />%
-        </label>
-        <label>Wants Cap
-          <input type="number" id="wants-cap" min="0" step="1" placeholder="30" />%
-        </label>
-        <label>Debt Repayment Cap
-          <input type="number" id="debt-cap" min="0" step="1" placeholder="20" />%
-        </label>
-        <button id="calc-budget">Calculate Plan</button>
-      </form>
-      <div id="budget-plan" class="budget-plan"></div>
+      <div class="card elevate">
+        <div class="card-header">
+          <h3>Plan your month</h3>
+        </div>
+        <form class="budget-form">
+          <div class="field">
+            <input type="number" id="income" min="0" step="1" placeholder="25000" />
+            <label>Monthly Income</label>
+          </div>
+          <div class="field">
+            <input type="number" id="savings-goal" min="0" step="1" placeholder="5000" />
+            <label>Savings Goal</label>
+          </div>
+          <div class="field">
+            <input type="number" id="essentials-cap" min="0" step="1" placeholder="50" />
+            <label>Essentials %</label>
+          </div>
+          <div class="field">
+            <input type="number" id="wants-cap" min="0" step="1" placeholder="30" />
+            <label>Wants %</label>
+          </div>
+          <div class="field">
+            <input type="number" id="debt-cap" min="0" step="1" placeholder="20" />
+            <label>Debt %</label>
+          </div>
+          <button id="calc-budget" class="btn primary">Calculate Plan</button>
+        </form>
+        <div id="budget-plan" class="budget-plan"></div>
+      </div>
     </section>
 
     <!-- Suggestions pane -->
     <section id="tab-tips" class="tab" aria-label="Suggestions">
-      <div id="tips-list" class="tips-list"></div>
+      <div class="grid-2">
+        <div class="card elevate">
+          <div class="card-header">
+            <h3>Tips & Tricks</h3>
+          </div>
+          <div id="tips-list" class="tips-list"></div>
+        </div>
+        <div class="card elevate">
+          <div class="card-header">
+            <h3>Monthly OTP</h3>
+          </div>
+          <div class="otp">
+            <p>Renew monthly to enable actions</p>
+            <button class="btn subtle" id="renew-otp-btn">Renew OTP</button>
+            <div id="otp-status" class="otp-status pill">—</div>
+          </div>
+        </div>
+      </div>
     </section>
   </main>
 
-  <footer class="app-footer">
-    <small>Prototype • OTP (mock) renews monthly • Built for concept validation</small>
+  <footer class="app-footer glass">
+    <small>Prototype • Built for concept validation</small>
   </footer>
 
   <script src="app.js"></script>
