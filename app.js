@@ -3,6 +3,10 @@
 /* ================ Constants ================ */
 const STORAGE_KEY = 'gobuddie-state-v2';
 const STORAGE_VERSION = 2;
+const MONTHS_IN_YEAR = 12;
+const TOAST_DISPLAY_MS = 3500;
+const TOAST_FADE_MS = 300;
+const AMOUNT_PENALTY_DIVISOR = 10000; // Scaling factor for weighted prioritization amount penalty
 
 /* ================ Store ================ */
 const store = {
@@ -20,6 +24,7 @@ const store = {
 const toastManager = {
   queue: [],
   container: null,
+  silent: false,
   init() {
     this.container = document.createElement('div');
     this.container.id = 'toast-container';
@@ -28,14 +33,15 @@ const toastManager = {
     document.body.appendChild(this.container);
   },
   show(message, type = 'info') {
+    if (this.silent) return;
     const toast = document.createElement('div');
     toast.className = `toast toast-${type}`;
     toast.textContent = message;
     this.container.appendChild(toast);
     setTimeout(() => {
       toast.classList.add('fade-out');
-      setTimeout(() => toast.remove(), 300);
-    }, 3500);
+      setTimeout(() => toast.remove(), TOAST_FADE_MS);
+    }, TOAST_DISPLAY_MS);
   }
 };
 
@@ -48,7 +54,7 @@ function loadState() {
     // Migrate older versions
     if (!data.version || data.version < STORAGE_VERSION) {
       // Fill defaults for missing fields
-      data.bills = (data.bills || []).map(b => ({
+      data.bills = (data.bills ?? []).map(b => ({
         ...b,
         amountRemaining: b.amountRemaining ?? b.amount,
         recurringRule: b.recurringRule ?? { interval: 'none', autoGenerate: false },
@@ -59,14 +65,14 @@ function loadState() {
       data.useWeightedPrioritization = data.useWeightedPrioritization ?? false;
     }
     Object.assign(store, {
-      bills: data.bills || [],
-      reminders: data.reminders || [],
-      points: data.points || 0,
-      monthlyBudget: data.monthlyBudget || 0,
+      bills: data.bills ?? [],
+      reminders: data.reminders ?? [],
+      points: data.points ?? 0,
+      monthlyBudget: data.monthlyBudget ?? 0,
       funds: data.funds ?? 2000,
-      otpMonth: data.otpMonth || null,
+      otpMonth: data.otpMonth ?? null,
       useWeightedPrioritization: data.useWeightedPrioritization ?? false,
-      lastSaved: data.lastSaved || null
+      lastSaved: data.lastSaved ?? null
     });
   } catch (e) {
     console.warn('Failed to load state:', e);
@@ -268,8 +274,8 @@ function deleteBill(id) {
 /* ================ Recurring Bills ================ */
 function getNextMonthDate(dateStr) {
   const [y, m, d] = dateStr.split('-').map(Number);
-  const nextMonth = m === 12 ? 1 : m + 1;
-  const nextYear = m === 12 ? y + 1 : y;
+  const nextMonth = m === MONTHS_IN_YEAR ? 1 : m + 1;
+  const nextYear = m === MONTHS_IN_YEAR ? y + 1 : y;
   // Clamp to last day of next month if needed
   const lastDayOfNextMonth = new Date(nextYear, nextMonth, 0).getDate();
   const clampedDay = Math.min(d, lastDayOfNextMonth);
@@ -631,14 +637,13 @@ function prioritizeByBudget() {
 }
 
 /* ---------------- Weighted Prioritization ---------------- */
-const ESSENTIAL_CATEGORIES = ['Utilities', 'Government'];
 const CATEGORY_WEIGHTS = {
-  'Utilities': 1.5,
-  'Government': 1.5,
+  'Utilities': 1.5,    // Essential - high priority
+  'Government': 1.5,   // Essential - high priority
   'Telco': 1.0,
   'Internet': 1.0,
   'E-Wallets': 0.8,
-  'Streaming': 0.5,
+  'Streaming': 0.5,    // Non-essential - lower priority
   'Other': 0.7
 };
 
@@ -659,7 +664,7 @@ function prioritizeWeighted() {
     score += catWeight;
     
     // Amount penalty (higher amounts get slightly lower priority)
-    score -= amt / 10000;
+    score -= amt / AMOUNT_PENALTY_DIVISOR;
     
     return { bill: b, score, amount: amt };
   });
@@ -1107,17 +1112,17 @@ function seedDemoData() {
   const ym = currentMonthStr();
   // Only seed if no bills exist (fresh start)
   if (store.bills.length === 0) {
-    // Suppress toasts during seed
-    const origShow = toastManager.show;
-    toastManager.show = () => {};
-    
-    createBill('Meralco', 1500, `${ym}-05`, false, 'Utilities');
-    createBill('Globe', 999, `${ym}-10`, false, 'Telco');
-    createBill('Water', 600, `${ym}-15`, true, 'Utilities');
-    createBill('Netflix', 549, `${ym}-20`, false, 'Streaming', { interval: 'monthly', autoGenerate: true });
-    store.monthlyBudget = 3000;
-    
-    toastManager.show = origShow;
+    // Suppress toasts during seed using silent flag
+    toastManager.silent = true;
+    try {
+      createBill('Meralco', 1500, `${ym}-05`, false, 'Utilities');
+      createBill('Globe', 999, `${ym}-10`, false, 'Telco');
+      createBill('Water', 600, `${ym}-15`, true, 'Utilities');
+      createBill('Netflix', 549, `${ym}-20`, false, 'Streaming', { interval: 'monthly', autoGenerate: true });
+      store.monthlyBudget = 3000;
+    } finally {
+      toastManager.silent = false;
+    }
     
     if (store.useWeightedPrioritization) {
       prioritizeWeighted();
