@@ -440,3 +440,72 @@ tr.canceled td:first-child {
   .form { grid-template-columns: 1fr; }
   .calendar-grid { grid-template-columns: repeat(2, 1fr); }
 }
+
+/* Hotfix: restore readable classic look and fix floating labels */
+
+/* Reduce glass/blur and return to solid panels */
+.glass {
+  background: rgba(17, 24, 39, 0.95) !important;
+  backdrop-filter: none !important;
+  border: 1px solid #1f2937 !important;
+}
+.card {
+  background: #111827 !important;
+  border: 1px solid #1f2937 !important;
+  box-shadow: none !important;
+}
+.bg-gradient { display: none !important; }
+
+/* Simpler buttons */
+.btn.primary, .btn.glow {
+  background: #22d3ee !important;
+  color: #032330 !important;
+  border: 1px solid #22d3ee !important;
+  box-shadow: none !important;
+}
+.btn:hover { transform: none !important; }
+
+/* Chat bubbles closer to classic */
+.msg .bubble {
+  background: #0b1220 !important;
+  border: 1px solid #243142 !important;
+}
+.msg.system .bubble { background: #0e1a2b !important; border-color: #2a3b52 !important; }
+
+/* Calendar polish */
+.calendar-day {
+  background: #111827 !important;
+  border: 1px solid #1f2937 !important;
+}
+.bill { background: #0c1a2a !important; border-color: #374151 !important; }
+.bill.scheduled { background: #0a2220 !important; border-color: #10b981 !important; }
+
+/* Labels: always float above to avoid overlapping selects/date */
+.field { position: relative; padding-top: 18px; }
+.field label {
+  position: absolute !important;
+  left: 12px !important;
+  top: -8px !important;
+  transform: none !important;
+  font-size: 11px !important;
+  color: #9ca3af !important;
+  background: #111827 !important;
+  padding: 0 6px !important;
+}
+.field input, .field select {
+  background: #0b1220 !important;
+  border: 1px solid #334155 !important;
+  color: #e5e7eb !important;
+}
+.field input:focus, .field select:focus {
+  box-shadow: none !important;
+  border-color: #22d3ee !important;
+  background: #0b1220 !important;
+}
+
+/* Date/select spacing so label never collides */
+.field input[type="date"], .field select { padding-right: 36px; }
+
+/* Typography contrast */
+:root { --text: #e5e7eb; --muted: #9ca3af; }
+body { color: var(--text) !important; }
