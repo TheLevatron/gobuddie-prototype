@@ -14,28 +14,31 @@
       <h1>GoBuddie</h1>
       <span class="subtitle">Banking in Chat</span>
     </div>
-    <nav class="nav">
-      <button class="tab-btn" data-tab="dashboard" aria-selected="true">
+    <nav class="nav" role="tablist">
+      <button class="tab-btn" data-tab="dashboard" aria-selected="true" role="tab" aria-controls="tab-dashboard">
         <span class="icon">📊</span> Dashboard
       </button>
-      <button class="tab-btn" data-tab="chat">
+      <button class="tab-btn" data-tab="chat" role="tab" aria-controls="tab-chat">
         <span class="icon">💬</span> Chat
       </button>
-      <button class="tab-btn" data-tab="calendar">
+      <button class="tab-btn" data-tab="calendar" role="tab" aria-controls="tab-calendar">
         <span class="icon">🗓️</span> Calendar
       </button>
-      <button class="tab-btn" data-tab="budgeting">
+      <button class="tab-btn" data-tab="budgeting" role="tab" aria-controls="tab-budgeting">
         <span class="icon">🧮</span> Budgeting
       </button>
-      <button class="tab-btn" data-tab="tips">
+      <button class="tab-btn" data-tab="tips" role="tab" aria-controls="tab-tips">
         <span class="icon">💡</span> Tips
+      </button>
+      <button class="tab-btn" data-tab="settings" role="tab" aria-controls="tab-settings">
+        <span class="icon">⚙️</span> Settings
       </button>
     </nav>
   </header>
 
   <main>
     <!-- Dashboard pane (default active) -->
-    <section id="tab-dashboard" class="tab active" aria-label="Dashboard">
+    <section id="tab-dashboard" class="tab active" aria-label="Dashboard" role="tabpanel">
       <div class="grid-3">
         <div class="card elevate">
           <div class="card-header">
@@ -159,6 +162,13 @@
               <input type="date" id="qa-due" required />
               <label>Due date</label>
             </div>
+            <div class="field">
+              <select id="qa-recurrence" class="select">
+                <option value="none">None</option>
+                <option value="monthly">Monthly</option>
+              </select>
+              <label>Recurrence</label>
+            </div>
             <button type="submit" class="btn glow">Add Bill</button>
           </form>
         </div>
@@ -174,7 +184,7 @@
         <div class="table-responsive">
           <table class="table modern" id="recent-bills-table">
             <thead>
-              <tr><th>Name</th><th>Category</th><th>Amount</th><th>Due</th><th>Scheduled</th><th>Actions</th></tr>
+              <tr><th>Name</th><th>Category</th><th>Amount</th><th>Due</th><th>Status</th><th>Actions</th></tr>
             </thead>
             <tbody></tbody>
           </table>
@@ -183,7 +193,7 @@
     </section>
 
     <!-- Chat pane -->
-    <section id="tab-chat" class="tab" aria-label="Chat">
+    <section id="tab-chat" class="tab" aria-label="Chat" role="tabpanel">
       <div class="layout-vert">
         <div id="chat-log" class="chat-log glass"></div>
         <form id="chat-form" class="chat-form">
@@ -195,15 +205,17 @@
         </form>
         <div class="quick-actions">
           <button class="chip" data-msg="Add Globe 999 due 2025-12-10">+ Globe 999 due Dec 10</button>
+          <button class="chip" data-msg="Add recurring Netflix 549 due 2025-12-20 monthly">+ Netflix (recurring)</button>
           <button class="chip" data-msg="Schedule payment Meralco 1500 on 2025-12-05">Schedule Meralco Dec 5</button>
           <button class="chip" data-msg="Prioritize bills if monthly budget is 3000">Prioritize ₱3000</button>
           <button class="chip" data-msg="Show reminders">Show reminders</button>
+          <button class="chip" data-msg="Show recurring">Show recurring</button>
         </div>
       </div>
     </section>
 
     <!-- Calendar pane -->
-    <section id="tab-calendar" class="tab" aria-label="Bills Calendar">
+    <section id="tab-calendar" class="tab" aria-label="Bills Calendar" role="tabpanel">
       <div class="card elevate">
         <div class="card-header">
           <h3>Monthly Bills</h3>
@@ -225,12 +237,14 @@
           <span class="pill scheduled">Scheduled</span>
           <span class="pill prioritized">Prioritized</span>
           <span class="pill overflow">Overflow</span>
+          <span class="pill recurring">R = Recurring</span>
+          <span class="pill partial">P = Partial</span>
         </div>
       </div>
     </section>
 
     <!-- Budgeting pane -->
-    <section id="tab-budgeting" class="tab" aria-label="Budgeting">
+    <section id="tab-budgeting" class="tab" aria-label="Budgeting" role="tabpanel">
       <div class="card elevate">
         <div class="card-header">
           <h3>Plan your month</h3>
@@ -263,7 +277,7 @@
     </section>
 
     <!-- Suggestions pane -->
-    <section id="tab-tips" class="tab" aria-label="Suggestions">
+    <section id="tab-tips" class="tab" aria-label="Suggestions" role="tabpanel">
       <div class="grid-2">
         <div class="card elevate">
           <div class="card-header">
@@ -279,6 +293,41 @@
             <p>Renew monthly to enable actions</p>
             <button class="btn subtle" id="renew-otp-btn">Renew OTP</button>
             <div id="otp-status" class="otp-status pill">—</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Settings pane -->
+    <section id="tab-settings" class="tab" aria-label="Settings" role="tabpanel">
+      <div class="grid-2">
+        <div class="card elevate">
+          <div class="card-header">
+            <h3>Data Management</h3>
+          </div>
+          <div class="settings-section">
+            <p id="last-saved" class="muted">Not saved yet</p>
+            <div class="settings-actions">
+              <button class="btn primary" id="export-data-btn">Export Data</button>
+              <button class="btn subtle" id="import-data-btn">Import Data</button>
+              <input type="file" id="import-file-input" accept=".json" style="display: none;" />
+            </div>
+            <hr class="divider" />
+            <button class="btn danger" id="reset-data-btn">Reset All Data</button>
+            <small class="muted">This will clear all saved data and cannot be undone.</small>
+          </div>
+        </div>
+
+        <div class="card elevate">
+          <div class="card-header">
+            <h3>Prioritization</h3>
+          </div>
+          <div class="settings-section">
+            <div class="toggle-row">
+              <label for="weighted-toggle">Weighted prioritization</label>
+              <input type="checkbox" id="weighted-toggle" class="toggle" />
+            </div>
+            <small class="muted">When enabled, bills are prioritized based on category importance (essentials weighted higher) and amount.</small>
           </div>
         </div>
       </div>
